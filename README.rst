@@ -46,7 +46,6 @@ Example Usage
     '51.18'
     >>> print(ystockquote.get_bid_realtime('GOOG'))
     '904.77'
-    >>>
     >>> print(ystockquote.get_price_book(['GOOG','TSLA']))
     [u'4.69', u'46.67']
     >>> print(ystockquote.get_bid_realtime(['GOOG','TSLA']))
