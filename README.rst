@@ -47,6 +47,10 @@ Example Usage
     >>> print(ystockquote.get_bid_realtime('GOOG'))
     '904.77'
     >>>
+    >>> print(ystockquote.get_price_book(['GOOG','TSLA']))
+    [u'4.69', u'46.67']
+    >>> print(ystockquote.get_bid_realtime(['GOOG','TSLA']))
+    [u'1214.3199', u'245.41']
 
 .. code:: python
 
