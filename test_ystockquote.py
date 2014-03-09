@@ -32,13 +32,41 @@ class Pep8ConformanceTestCase(unittest.TestCase):
 
 class YStockQuoteTestCase(TestWithScenarios):
 
-    def test_get_all(self):
+    def test_get_all_single(self):
         symbol = 'GOOG'
         all_info = ystockquote.get_all(symbol)
         self.assertIsInstance(all_info, dict)
         pc = all_info['previous_close']
         self.assertNotEqual(pc, 'N/A')
         self.assertGreater(float(pc), 0)
+
+    def test_get_all_multiple(self):
+        symbols = ['GOOG', 'TSLA']
+        all_info = ystockquote.get_all(symbols)
+        self.assertIsInstance(all_info, list)
+        for row in all_info:
+            self.assertIsInstance(row, dict)
+            pc = row['previous_close']
+            self.assertNotEqual(pc, 'N/A')
+            self.assertGreater(float(pc), 0)
+
+    def test_excessive_symbol_request(self):
+        symbols = ['GOOG'] * 201
+        self.assertRaises(Exception, ystockquote.get_all, (symbols))
+
+    def test_get_previous_close_single(self):
+        symbol = 'GOOG'
+        pc = ystockquote.get_previous_close(symbol)
+        self.assertNotEqual(pc, 'N/A')
+        self.assertGreater(float(pc), 0)
+
+    def test_get_previous_close_multiple(self):
+        symbols = ['GOOG', 'TSLA']
+        pcs = ystockquote.get_previous_close(symbols)
+        self.assertIsInstance(pcs, list)
+        for pc in pcs:
+            self.assertNotEqual(pc, 'N/A')
+            self.assertGreater(float(pc), 0)
 
     def test_get_historical_prices(self):
         symbol = 'GOOG'

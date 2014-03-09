@@ -26,11 +26,12 @@ except ImportError:
 
 
 def _request(symbol, stat):
+    symbol = symbol if not isinstance(symbol, list) else "+".join(symbol)
     url = 'http://finance.yahoo.com/d/quotes.csv?s=%s&f=%s' % (symbol, stat)
     req = Request(url)
     resp = urlopen(req)
     content = resp.read().decode().strip()
-    return content
+    return content if "+" not in symbol else content.splitlines()
 
 
 def get_all(symbol):
@@ -39,11 +40,28 @@ def get_all(symbol):
 
     Returns a dictionary.
     """
+
+    if isinstance(symbol, list) and len(symbol) > 200:
+        raise Exception("Yahoo Finance only supports 200 symbols symbols in "
+                        "any single request.")
+
     ids = \
         'ydb2r1b3qpoc1d1cd2c6t1k2p2c8m5c3m6gm7hm8k1m3lm4l1t8w1g1w4g3p' \
         '1g4mg5m2g6kvjj1j5j3k4f6j6nk5n4ws1xj2va5b6k3t7a2t615l2el3e7v1' \
         'e8v7e9s6b4j4p5p6rr2r5r6r7s7'
-    values = _request(symbol, ids).split(',')
+
+    result = _request(symbol, ids)
+
+    if isinstance(symbol, list):
+        for (i, row) in enumerate(result):
+            result[i] = _parse_array(row.split(','))
+
+        return result
+    else:
+        return _parse_array(result.split(','))
+
+
+def _parse_array(values):
     return dict(
         dividend_yield=values[0],
         dividend_per_share=values[1],
